@@ -1,0 +1,9 @@
+Keygen generates 2 key pairs, one for public key encryption using RSA-OAEP (through the BC provider) and the other for digital signature using MD5/RSA.  These are then coded as hex and output to text files (for demo purposes since it is easier to visually compare hex than binary) which are used by Encrypt and Decrypt.
+
+Encrypt takes 2 arguments at the command line, the file containing the plaintext and the file to output the ciphertext to.  The input taken from the plaintext is encrypted with 128-bit AES in CBC mode, and a secret key is generated for AES.  This symmetric secret key is encrypted using RSA-OAEP with the public key for public key encryption generated in Keygen.  The resulting block is 'SK message IV(for CBC)' and that is digitally signed using the private key for digital signature.  This signature is appended to the end of the block and is output as the ciphertext to the file designated.
+
+Decrypt also takes 2 arguments at the command line, the file containing the ciphertext and the file to output the decrypted ciphertext to.  The digital signature is first verified with the public key for digital signature generated in Keygen.  If verification does not succeed the program outputs that the file has been tampered with and exits.  If verification is successful, the private key for public key encryption is used to decrypt the secret key for AES, and along with the IV for CBC is used to decrypt the message, which is then output to the file designated.
+
+Misc contains the functions that convert binary to hex strings and vice versa, and the function that outputs a given string to a given file.
+
+BouncyCastle (http://www.bouncycastle.org/) is used as a provider for RSA-OAEP, while AES/CBC and MD5/RSA use the default JCE as a provider.
